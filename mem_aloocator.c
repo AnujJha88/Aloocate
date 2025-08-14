@@ -11,6 +11,21 @@ struct block_meta *next;
 
 void *global_base=NULL;
 
+block_meta_t *request_space( block_meta_t** last,size_t size){
+    // we ask the OS for some space here
+    // this is where we need the unistd header cuz we need to call the sbrk
+    // method to beg for memory from the oS
+    block_meta_t block;
+    block=sbrk(0);// gives current end of the heap
+
+    if(last){
+        last->next=block;
+
+    }
+
+
+}
+
 //first fit strat-> what you do is you find the first block large enough for
 //your purposes and then you just allocate that
 
