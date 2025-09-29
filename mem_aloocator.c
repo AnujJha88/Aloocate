@@ -11,7 +11,7 @@ struct block_meta *next;
 
 void *global_base=NULL;
 
-block_meta_t *request_space( block_meta_t** last,size_t size){
+block_meta_t *request_space( block_meta_t* last,size_t size){
     // we ask the OS for some space here
     // this is where we need the unistd header cuz we need to call the sbrk
     // method to beg for memory from the oS
@@ -22,7 +22,7 @@ block_meta_t *request_space( block_meta_t** last,size_t size){
     if ((void*)-1 ==request)return NULL;// heap ended so we dont got any space
 
     if(last){
-        (*last)->next=block;
+        (last)->next=block;
 
     }
 
@@ -37,8 +37,8 @@ block_meta_t *request_space( block_meta_t** last,size_t size){
 //first fit strat-> what you do is you find the first block large enough for
 //your purposes and then you just allocate that
 
-block_meta_t* find_first_free(block_meta_t **last, size_t size){
-    block_meta_t *current=*last;
+block_meta_t* find_first_free( size_t size){
+    block_meta_t *current=global_base;
     while(current){
         if(current->is_free && current->size>= size){
             return current;
@@ -72,7 +72,7 @@ void* my_malloc(int size){
 
     }
     else{
-        new_mem=find_first_free(&global_base,size);
+        new_mem=find_first_free(size);
         if(new_mem){
             //TODO when we have a valid block available
             new_mem->is_free=0;// will do splitting stuff later
