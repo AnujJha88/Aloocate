@@ -38,7 +38,7 @@ block_meta_t *request_space( block_meta_t* last,size_t size){
 //your purposes and then you just allocate that
 
 block_meta_t* find_first_free( size_t size){
-    block_meta_t *current=global_base;
+    block_meta_t *current=(block_meta_t*)global_base;
     while(current){
         if(current->is_free && current->size>= size){
             return current;
@@ -51,7 +51,7 @@ block_meta_t* find_first_free( size_t size){
 block_meta_t* find_last_block(){
     if(!global_base) return NULL;//what else will you do with a null global base
 
-    block_meta_t* current=global_base;
+    block_meta_t* current=(block_meta_t*)global_base;
 
     while(current->next){
         current=current->next;
@@ -89,3 +89,6 @@ void* my_malloc(int size){
     return new_mem+1;
 }
 
+int main(){
+
+}
