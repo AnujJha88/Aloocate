@@ -53,7 +53,7 @@ block_meta_t* find_last_block(){
 
     block_meta_t* current=global_base;
 
-    while(currrent->next){
+    while(current->next){
         current=current->next;
     }
     return current;
