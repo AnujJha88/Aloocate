@@ -18,10 +18,18 @@ block_meta_t *request_space( block_meta_t** last,size_t size){
     block_meta_t* block;
     block=(block_meta_t *)sbrk(0);// gives current end of the heap
 
+    void* request=sbrk(META_SIZE+size);
+    if ((void*)-1 ==request)return NULL;// heap ended so we dont got any space
+
     if(last){
         (*last)->next=block;
 
     }
+
+    block->size=size;
+    block->is_free=false;
+    block->next=NULL;
+
 
     return block;
 }
