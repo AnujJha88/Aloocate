@@ -61,6 +61,17 @@ block_meta_t* find_last_block(){
 
 void split_block(block_meta_t *block,size_t size){
 
+    if(block-> size >= size+META_SIZE+16){
+         block_meta_t *new_block = (block_meta_t*)((char*)(block + 1) + size);
+        // this finds the start of current block and then finds where to end the current one and start the new one
+        new_block->size=block->size -size-META_SIZE;
+        new_block->is_free=true;
+        new_block->next=block-> next;
+        block-> next=new_block;
+        block->size=size;
+
+
+    }
 }
 
 
