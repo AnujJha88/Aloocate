@@ -1,4 +1,4 @@
-#include <unistd.h>
+
 #include<stdbool.h>
 typedef struct block_meta{
 size_t size;
@@ -59,6 +59,11 @@ block_meta_t* find_last_block(){
     return current;
 }
 
+void split_block(block_meta_t *block,size_t size){
+
+}
+
+
 void* my_malloc(int size){
 
     if(size<=0) return NULL;
@@ -87,6 +92,14 @@ void* my_malloc(int size){
 
     }
     return new_mem+1;
+}
+
+block_meta_t* get_block_ptr(void* ptr){
+    return (block_meta_t*)ptr -1;
+}
+
+void* my_free(){
+
 }
 
 int main(){
