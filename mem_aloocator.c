@@ -1,5 +1,11 @@
 
-#include<stdbool.h>
+
+#include <stddef.h>   // For size_t and NULL
+#include <stdbool.h>
+#include <unistd.h>   // For sbrk()
+#include <string.h>   // For memset()
+
+
 typedef struct block_meta{
 size_t size;
 struct block_meta *next;
@@ -47,6 +53,8 @@ block_meta_t* find_first_free( size_t size){
     }
     return NULL;
 }
+
+//best fit this tries to be very very efficient
 
 block_meta_t* find_last_block(){
     if(!global_base) return NULL;//what else will you do with a null global base
@@ -119,6 +127,16 @@ void my_free(void* ptr){
         block->size+=block->next->size+META_SIZE;
         block->next=block->next->next;
     }
+}
+
+void* my_calloc(size_t elesize,size_t numelem){
+int  size=elesize*numelem;
+
+    void *ptr=my_malloc(size);
+    if(ptr){
+        memset(ptr,0,size);
+    }
+    return ptr;
 }
 
 int main(){
