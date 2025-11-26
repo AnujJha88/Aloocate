@@ -91,7 +91,8 @@ void* my_malloc(int size){
         new_mem=find_first_free(size);
         if(new_mem){
             //TODO when we have a valid block available
-            new_mem->is_free=0;// will do splitting stuff later
+            split_block(new_mem,size);
+            new_mem->is_free=0;
 
         }
 
@@ -109,8 +110,15 @@ block_meta_t* get_block_ptr(void* ptr){
     return (block_meta_t*)ptr -1;
 }
 
-void* my_free(){
+void my_free(void* ptr){
+ if(!ptr)return;
+    block_meta_t* block=get_block_ptr(ptr);
+    block->is_free=1;
 
+    if(block->next && block->next->is_free){
+        block->size+=block->next->size+META_SIZE;
+        block->next=block->next->next;
+    }
 }
 
 int main(){
