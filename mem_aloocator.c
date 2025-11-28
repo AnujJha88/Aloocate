@@ -132,10 +132,15 @@ void my_free(void* ptr){
     if(block->next && block->next->is_free){
         block->size+=block->next->size+META_SIZE;
         block->next=block->next->next;
+
+        if(block->next)block->next->prev=block;
     }
     if(block->prev && block->prev->is_free){
-        block->size=+=block->prev->size+META_SIZE;
-        block->prev=block->prev->prev;
+        block->prev->size=block->size+META_SIZE;
+        block->prev->next=block->next;
+
+        if(block->next)block->next->prev=block->prev;
+        block=block->prev
     }
 }
 
