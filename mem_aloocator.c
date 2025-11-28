@@ -82,7 +82,12 @@ void split_block(block_meta_t *block,size_t size){
         // this finds the start of current block and then finds where to end the current one and start the new one
         new_block->size=block->size -size-META_SIZE;
         new_block->is_free=true;
+
         new_block->next=block-> next;
+        new_block->prev=block;
+        if (new_block->next) {
+            new_block->next->prev = new_block; // Update the neighbor's back-link
+            }
         block-> next=new_block;
         block->size=size;
 
