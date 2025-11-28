@@ -162,12 +162,33 @@ int  size=elesize*numelem;
 void* my_realloc(void* ptr, size_t size){
     if(!ptr)my_malloc(size);
     if(size==0)my_free(ptr);
+    size_t aligned_size=aling8(size);
     //now we do the actual function of realloc which is resizing
     block_meta_t* block=get_block_ptr(ptr);
 
     if(block->size>=size)return ptr;
 
+if(block->next && block->next->is_free){
+        size_t combined_size=block->size+META_SIZE+block->next->size;
 
+        if(combined_size>=aligned_size){
+            block->size=combined_size;
+        block->next=block->next->next;
+
+        if(block->next)block->next->prev=block;
+
+    }
+        return ptr;
+    }
+
+    // next block also not useful so lets just do reallocation
+    void* new_ptr = my_malloc(aligned_size);
+    if (!new_ptr) return NULL;
+
+    memcpy(new_ptr, ptr, block->size);
+    my_free(ptr);
+
+    return new_ptr;
 
 }
 
