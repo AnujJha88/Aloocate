@@ -39,6 +39,7 @@ block_meta_t *request_space( block_meta_t* last,size_t size){
     block->size=size;
     block->is_free=false;
     block->next=NULL;
+    block->prev=last;
 
 
     return block;
@@ -93,27 +94,25 @@ void split_block(block_meta_t *block,size_t size){
 void* my_malloc(int size){
 
     if(size<=0) return NULL;
+    size_t aligned_size=aling8(size);
     block_meta_t *new_mem;
     if(!global_base){
         // so this is our first allocation
-        new_mem=request_space(NULL,size);
+        new_mem=request_space(NULL,aligned_size);
         if(!new_mem)return NULL;
         global_base=new_mem;
 
 
     }
     else{
-        new_mem=find_first_free(size);
-        if(new_mem){
-            //TODO when we have a valid block available
-            split_block(new_mem,size);
+        new_mem=find_first_free(aligned_size);
             new_mem->is_free=0;
 
         }
 
         else{
             block_meta_t* last=find_last_block();
-            new_mem=request_space(last,size);
+            new_mem=request_space(last,aligned_size);
             if(!new_mem) return NULL;
         }
 
@@ -148,6 +147,18 @@ int  size=elesize*numelem;
         memset(ptr,0,size);
     }
     return ptr;
+}
+
+void* my_realloc(void* ptr, size_t size){
+    if(!ptr)my_malloc(size);
+    if(size==0)my_free(ptr);
+    //now we do the actual function of realloc which is resizing
+    block_meta_t* block=get_block_ptr(ptr);
+
+    if(block->size>=size)return ptr;
+
+
+
 }
 
 int main(){
