@@ -4,11 +4,15 @@
 #include <stdbool.h>
 #include <unistd.h>   // For sbrk()
 #include <string.h>   // For memset()
-
+#define ALIGNMENT 8
+size_t aling8(size_t s){
+    return (s+7)&~7;//rounds up to a multiple of 8
+}
 
 typedef struct block_meta{
 size_t size;
 struct block_meta *next;
+struct block_meta *prev;
     bool is_free;
 
 }block_meta_t;
@@ -55,6 +59,9 @@ block_meta_t* find_first_free( size_t size){
 }
 
 //best fit this tries to be very very efficient
+block_meta_t *find_best_fit(size_t size){
+
+}
 
 block_meta_t* find_last_block(){
     if(!global_base) return NULL;//what else will you do with a null global base
@@ -126,6 +133,10 @@ void my_free(void* ptr){
     if(block->next && block->next->is_free){
         block->size+=block->next->size+META_SIZE;
         block->next=block->next->next;
+    }
+    if(block->prev && block->prev->is_free){
+        block->size=+=block->prev->size+META_SIZE;
+        block->prev=block->prev->prev;
     }
 }
 
